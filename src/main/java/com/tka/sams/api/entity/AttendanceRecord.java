@@ -76,9 +76,6 @@ public class AttendanceRecord {
 		this.subject = subject;
 	}
 
-	
-
-
 	public String getDate() {
 		return date;
 	}

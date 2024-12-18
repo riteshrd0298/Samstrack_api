@@ -1,5 +1,6 @@
 package com.tka.sams.api.dao;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -34,26 +35,27 @@ public class AttendanceRecordDao {
 		return list;
 	}
 
-	public List<AttendanceRecord> getAllAttendanceRecords(String date, long subjectId) {
-		Session session = null;
-		List<AttendanceRecord> list = null;
-		try {
-			session = factory.openSession();
+	 public List<AttendanceRecord> getAllAttendanceRecords(String date, Long subjectId) {
+	        List<AttendanceRecord> attendanceRecords = Collections.emptyList();
+	        try (Session session = factory.openSession()) {
+	            Criteria criteria = session.createCriteria(AttendanceRecord.class);
 
-			Criteria criteria = session.createCriteria(AttendanceRecord.class);
-			SimpleExpression dateEq = Restrictions.eq("date", date);
-			SimpleExpression subjectEq = Restrictions.eq("subject.id", subjectId);
+	            // Add condition for date
+	            if (date != null && !date.isEmpty()) {
+	                criteria.add(Restrictions.eq("date", date));
+	            }
 
-			criteria.add(Restrictions.and(dateEq, subjectEq));
+	            // Add condition for subjectId
+	            if (subjectId != null) {
+	                criteria.add(Restrictions.eq("subject.id", subjectId));
+	            }
 
-			list = criteria.list();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			session.close();
-		}
-		return list;
-	}
+	            attendanceRecords = criteria.list();
+	        } catch (Exception e) {
+	            e.printStackTrace(); // Replace with proper logging
+	        }
+	        return attendanceRecords;
+	    }
 
 	public AttendanceRecord saveAttendance(AttendanceRecord attendanceRecord) {
 		Session session = null;
